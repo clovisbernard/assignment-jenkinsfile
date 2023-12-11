@@ -99,11 +99,15 @@ def manage_user_account() {
     """
     if (params.ACCOUNT_MANAGEMENT == 'lock_user')
     sh """
+        if ! grep -q "^${params.USERNAME}:" /etc/passwd; then
+        echo "user ${params.USERNAME} does not exist"
+        else
         sudo passwd -l ${params.USERNAME}
         sudo echo "The user ${params.USERNAME} with password ${params.PASSWORD} has been locked"
         sudo cat /etc/passwd
         sudo cat /etc/shadow
         ls /home
+        fi
     """
     if (params.ACCOUNT_MANAGEMENT == 'unlock_user')
     sh """
