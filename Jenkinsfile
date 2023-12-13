@@ -78,12 +78,16 @@ def collect_information() {
 def manage_user_account() {
     if (params.ACCOUNT_MANAGEMENT == 'add_user')
     sh """
+        if ! grep -q "^${params.USERNAME}:" /etc/passwd; then
         sudo useradd -m ${params.USERNAME}
         sudo echo "${params.USERNAME}:${params.PASSWORD}" | sudo -S chpasswd
         sudo usermod -c "${params.FIRSTNAME} ${params.LASTNAME}" ${params.USERNAME}
         sudo cat /etc/passwd
         sudo cat /etc/shadow
         ls /home
+        else
+        echo "user ${params.USERNAME} already exists"  
+        fi
     """
     if (params.ACCOUNT_MANAGEMENT == 'delete_user')
     sh """
